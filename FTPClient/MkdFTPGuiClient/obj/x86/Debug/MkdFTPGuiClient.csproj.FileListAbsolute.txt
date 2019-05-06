@@ -1,0 +1,14 @@
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Debug\MkdFTPGuiClient.exe
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Debug\MkdFTPGuiClient.pdb
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.Properties.Resources.resources
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.exe
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.pdb
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Debug\MkdFtpClient.dll
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Debug\MkdFtpClient.pdb
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.MainForm.resources
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.csproj.GenerateResource.Cache
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Debug\MkdFTPGuiClient.exe.config
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.RenameMakeForm.resources
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.csprojAssemblyReference.cache
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.csproj.CoreCompileInputs.cache
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Debug\MkdFTPGuiClient.csproj.CopyComplete

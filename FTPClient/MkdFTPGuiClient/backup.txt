@@ -1,0 +1,276 @@
+private void _Download(FTPClient ftp, FTPFile currentFile, FTPFile file, DirectoryInfo downloadPath, 
+                               ref long downloaded, long totalToDownload, DateTime beginDownloadTime,
+                               ref DateTime beginDownloadTimeBetweenEachFile, ref bool canceled, byte[] buffer, 
+                               ref int readBetweenCalls)
+        {
+            FTPReply reply = null;
+            Socket dataConnection = null;
+            while (true)
+            {
+                if (reply == null)
+                {
+                    if (this.connectionMode == MkdFtpClient.ConnectionMode.Active)
+                        reply = FTPCommands.PORT(ftp.ftpConnection, new IPEndPoint(IPAddress.Parse("127.0.0.1"), ActivePort = ++ActivePort));
+                    else
+                        reply = FTPCommands.PASV(ftp.ftpConnection);
+                    continue;
+                }
+
+                // Port command
+                if (reply.FtpCode == "200")
+                {
+                    reply = FTPCommands.RETR(ftp.ftpConnection, currentFile.AbsoluthFileName);
+                    if (reply.FtpCode == "125" || reply.FtpCode == "150")
+                        dataConnection = FTPCommands.getDataConnection(reply);
+                    continue;
+                }
+
+                // Pasv command
+                if (reply.FtpCode == "227")
+                {
+                    dataConnection = FTPCommands.getDataConnection(reply);
+                    reply = FTPCommands.RETR(ftp.ftpConnection, currentFile.AbsoluthFileName);
+                    continue;
+                }
+
+                if (reply.FtpCode == "125" || reply.FtpCode == "150")
+                {   
+                    //download file
+                    FileStream fs = null;
+                    FileInfo fileToDownload = null;
+                    try
+                    {
+                        if (!downloadPath.Exists)
+                            downloadPath.Create();
+                        fileToDownload = new FileInfo(downloadPath.FullName + Path.DirectorySeparatorChar + currentFile.Name);
+                        fs = fileToDownload.Create();
+                        DateTime beforeBufferFilled = DateTime.Now;
+
+                        int read = 0;
+                        while (true)
+                        {   
+                            int bytesPerRead = dataConnection.Receive(buffer, read, buffer.Length - read, SocketFlags.None);
+                            TimeSpan timeElapsedAfterBufferFilled = DateTime.Now - beforeBufferFilled;
+
+                            read += bytesPerRead;
+                            readBetweenCalls += bytesPerRead;
+                            downloaded += bytesPerRead;
+
+                            if (bytesPerRead == 0)
+                            {
+                                if (read > 0)
+                                {
+                                    TimeSpan timeElapsedBetweenDownloadOfEachFile = DateTime.Now - beginDownloadTimeBetweenEachFile;
+                                    TimeSpan downloadTime = DateTime.Now - beginDownloadTime;
+                                    double bytes_per_second = 0;
+                                    try
+                                    {
+                                        bytes_per_second = downloaded / downloadTime.TotalSeconds;
+                                    }catch (DivideByZeroException) { }
+                                    FTPDownloadProgressEventArgs e = 
+                                        new FTPDownloadProgressEventArgs(file, downloaded, totalToDownload, (int)bytes_per_second);
+
+                                    if (timeElapsedBetweenDownloadOfEachFile.TotalMilliseconds < 1000.0d)
+                                    {
+                                        if (readBetweenCalls >= buffer.Length)
+                                        {
+                                            if (timeElapsedBetweenDownloadOfEachFile.TotalMilliseconds < 1000.0d)
+                                                Thread.Sleep((int)(1000.0d - timeElapsedBetweenDownloadOfEachFile.TotalMilliseconds));
+                                            OnDownloadProgress(this, e);
+                                            readBetweenCalls = 0;
+                                            beginDownloadTimeBetweenEachFile = DateTime.Now;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        OnDownloadProgress(this, e);
+                                        readBetweenCalls = 0;
+                                        beginDownloadTimeBetweenEachFile = DateTime.Now;
+                                    }
+                                    
+                                    if (!(canceled = e.CancelDownload))
+                                    {
+                                        fs.Write(buffer, 0, read);
+                                        fs.Flush();
+                                    }
+                                    else
+                                    {
+                                        fs.Write(buffer, 0, read);
+                                        fs.Flush();
+                                    }
+                                }
+                                break;
+                            }
+                            else if ((read == buffer.Length) || (timeElapsedAfterBufferFilled.TotalMilliseconds >= 1000.0d))
+                            {
+                                if (timeElapsedAfterBufferFilled.TotalMilliseconds < 1000.0d)
+                                    Thread.Sleep((int)(1000.0d - timeElapsedAfterBufferFilled.TotalMilliseconds));
+                                TimeSpan downloadTime = DateTime.Now - beginDownloadTime;
+                                double bytes_per_second = 0;
+                                try
+                                {
+                                    bytes_per_second = downloaded / downloadTime.TotalSeconds;
+                                }
+                                catch (DivideByZeroException) { }
+                                FTPDownloadProgressEventArgs e = 
+                                    new FTPDownloadProgressEventArgs(file, downloaded, totalToDownload, (int)bytes_per_second);
+                                OnDownloadProgress(this, e);
+                                fs.Write(buffer, 0, read);
+                                fs.Flush();
+                                if (!(canceled = e.CancelDownload))
+                                {
+                                    read = 0;
+                                    beforeBufferFilled = DateTime.Now;
+                                }
+                                else
+                                    break;
+                            }// end of else if
+                        }// end of while
+
+                        dataConnection.Shutdown(SocketShutdown.Both);
+                        dataConnection.Close();
+                        fs.Close();
+                        if (canceled)
+                            fileToDownload.Delete();
+
+                        reply = FTPCommands.readReply(ftp.ftpConnection);
+                        OnCommandExecuted(this, new FTPReplyEventArgs(reply));
+                        break;
+                    }// end of try
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            if (dataConnection.Connected)
+                            {
+                                dataConnection.Shutdown(SocketShutdown.Both);
+                                dataConnection.Close();
+                            }
+                        }
+                        catch (Exception) { }
+                        
+                        try
+                        {
+                            if (fs != null)
+                            {
+                                fs.Close();
+                                if (fileToDownload.Exists)
+                                    fileToDownload.Delete();
+                            }
+                        }
+                        catch (Exception) { }
+
+                        reply = FTPCommands.readReply(ftp.ftpConnection);
+                        OnCommandExecuted(this, new FTPReplyEventArgs(reply));
+                        throw new FTPException(ex.Message, ex);
+                    }
+                }// end of if
+
+                throw new FTPException("Download of file " + currentFile.AbsoluthFileName + " failed");
+
+            }// end of while
+        }
+
+        private List<FTPFile> filesBeingDownloaded = new List<FTPFile>();
+        public void Download(FTPFile file, System.IO.DirectoryInfo downloadPath)
+        {
+            lock (_lock)
+            {
+                var s = from f in filesBeingDownloaded where f.AbsoluthFileName == file.AbsoluthFileName select f;
+                if (s.Count() == 1)
+                    return;
+                filesBeingDownloaded.Add(file);
+            }
+
+            FTPClient ftp = null;
+            FTPReply reply = null;
+            try
+            {
+                if (!downloadPath.FullName.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    downloadPath = new DirectoryInfo(downloadPath.FullName + Path.DirectorySeparatorChar.ToString());
+
+                OnDownloadStarted(this, new FTPDownloadEventArgs(file));
+                while (true)
+                {
+                    if (ftp == null)
+                    {
+                        ftp = new FTPClient();
+                        ftp.ConnectFailed += delegate(object sender, FTPErrorEventArgs e)
+                        {
+                            throw e.Error;
+                        };
+                        ftp.LoginFailed += delegate(object sender, FTPErrorEventArgs e)
+                        {
+                            throw e.Error;
+                        };
+                        ftp.Connect((IPEndPoint)this.ftpConnection.RemoteEndPoint);
+                        ftp.ftpConnection.CommandExecuted += new FTPEventHandler<FTPReplyEventArgs>(OnCommandExecuted);
+                        ftp.Login(this.Username, this.Password, this.Account);
+                        continue;
+                    }
+
+                    if (reply == null)
+                    {
+                        reply = FTPCommands.MODE(ftp.ftpConnection, Mode.Stream);
+                        if (reply.FtpCode == "200")
+                        {
+                            reply = FTPCommands.TYPE(ftp.ftpConnection, Type.Image);
+                            if (reply.FtpCode == "200")
+                                continue;
+                        }
+                        break;
+                    }
+
+                    List<FTPFile> files = null;
+                    files = ListDirectory(file, ftp.ftpConnection, ListDirectoryInitiator.Download);
+
+                    // if not canceled
+                    if (files != null)
+                    {
+                        long downloaded = 0;
+                        long totalToDownload = (from f in files where f.Type == FTPFileType.File select Convert.ToInt64(f.Size)).Sum();
+                        bool canceled = false;
+                        string rootDir = files[0].ParentDir.AbsoluthFileName;
+                        DateTime beginDownloadTime = DateTime.Now;
+                        DateTime beginDownloadTimeBetweenEachFile = DateTime.Now;
+                        ftp.ftpConnection.ReceiveBufferSize = 10 * 1024 * 1024;
+                        byte[] buffer = new byte[ftp.ftpConnection.ReceiveBufferSize];
+                        int readBetweenCals = 0;
+                        for (int i = 0; i < files.Count; ++i)
+                        {
+                            if (files[i].Type == FTPFileType.File)
+                            {
+                                DirectoryInfo dir = new DirectoryInfo(downloadPath.FullName +
+                                                                      files[i].ParentDir.AbsoluthFileName.Minus(rootDir).Replace('/', Path.DirectorySeparatorChar));
+                                _Download(ftp, files[i], file, dir, 
+                                          ref downloaded, totalToDownload,
+                                          beginDownloadTime, ref beginDownloadTimeBetweenEachFile,
+                                          ref canceled, buffer, ref readBetweenCals);
+                            }
+
+                            if (canceled)
+                                break;
+
+                        }// end of for
+                    }// end of if
+                    ftp.Logoff();
+                    ftp.Disconnect();
+                    break;
+                }// end of while
+                OnDownloadEnded(this, new FTPDownloadEventArgs(file));
+            }
+            catch (FTPException ex)
+            {
+                try
+                {
+                    ftp.Logoff();
+                    ftp.Disconnect();
+                }
+                catch (FTPException) { }
+                OnDownloadError(this, new FTPDownloadErrorEventArgs(file, ex));
+                OnDownloadEnded(this, new FTPDownloadEventArgs(file));
+            }
+
+            lock (_lock)
+                filesBeingDownloaded.Remove(file);
+        }

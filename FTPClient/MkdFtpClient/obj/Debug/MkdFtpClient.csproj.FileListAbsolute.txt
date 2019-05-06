@@ -1,0 +1,6 @@
+D:\DotNetWorkspace\MkdFtpClient\bin\Debug\MkdFtpClient.dll
+D:\DotNetWorkspace\MkdFtpClient\bin\Debug\MkdFtpClient.pdb
+D:\DotNetWorkspace\MkdFtpClient\obj\Debug\MkdFtpClient.dll
+D:\DotNetWorkspace\MkdFtpClient\obj\Debug\MkdFtpClient.pdb
+D:\DotNetWorkspace\MkdFtpClient\obj\Debug\MkdFTPClient.csprojAssemblyReference.cache
+D:\DotNetWorkspace\MkdFtpClient\obj\Debug\MkdFTPClient.csproj.CoreCompileInputs.cache

@@ -1,0 +1,83 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+    
+
+    <table id="calculator" >
+
+        <tbody>
+
+            <!-- First row / Calculator display -->
+            <tr>
+                <td id="display" colspan="5">
+                    <input id="calculatorDisplay" type="text" value="" disabled="disabled">
+                    <br>
+                    <input id="calculatorInput" type="text" value="0" disabled="disabled">
+                </td>
+            </tr>
+
+            <!-- Second row -->
+            <tr>
+                <td id="delete"> <button id="deleteBtn" type="button" value="del">&larr;</button> </td>
+                <td id="clearEntry"> <button id="clearEntryBtn" type="button" value="ce">CE</button> </td>
+                <td id="clear"> <button id="clearBtn" type="button" value="c">C</button> </td>
+                <td id="negate"> <button id="negateBtn" type="button" value="neg">+/-</button> </td>
+                <td id="squareRoot"> <button id="squareRootBtn" type="button" value="sqrt">&#8730;</button> </td>
+            </tr>
+
+            <!-- Third row -->
+            <tr>
+                <td id="seven"> <button id="sevenBtn" type="button" value="7">7</button> </td>
+                <td id="eight"> <button id="eightBtn" type="button" value="8">8</button> </td>
+                <td id="nine"> <button id="nineBtn" type="button" value="9">9</button> </td>
+                <td id="devide"> <button id="devideBtn" type="button" value="/">/</button> </td>
+                <td id="percentage"> <button id="percentageBtn" type="button" value="%">%</button> </td>
+            </tr>
+
+            <!-- Fourth row -->
+            <tr>
+                <td id="four"> <button id="fourBtn" type="button" value="4">4</button> </td>
+                <td id="five"> <button id="fiveBtn" type="button" value="5">5</button> </td>
+                <td id="six"> <button id="sixBtn" type="button" value="6">6</button> </td>
+                <td id="miltiply"> <button id="multiplyBtn" type="button" value="*">*</button> </td>
+                <td id="reciprocitate"> <button id="reciprocitateBtn" type="button" value="recip">1/x</button> </td>
+            </tr>
+
+            <!-- Fifth row -->
+            <tr>
+                <td id="one"> <button id="oneBtn" type="button" value="1">1</button> </td>
+                <td id="two"> <button id="twoBtn" type="button" value="2">2</button> </td>
+                <td id="three"> <button id="threeBtn" type="button" value="3">3</button> </td>
+                <td id="minus"> <button id="minusBtn" type="button" value="-">-</button> </td>
+                <td id="equal" rowspan="2"> <button id="equalBtn" type="button" value="=">=</button> </td>
+            </tr>
+
+            <!-- Sixth row -->
+            <tr>
+                <td id="zero" colspan="2"> <button id="zeroBtn" type="button" value="0">0</button> </td>
+                <td id="dot"> <button id="dotBtn" type="button" value=".">.</button> </td>
+                <td id="plus"> <button id="plusBtn" type="button" value="+">+</button> </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+    </script>
+    <script src="StringBuffer.js"></script>
+    <script src="ParseEquation.js"></script>
+    <script src="Calculate.js"></script>
+    <script src="Calculator.js"></script>
+</body>
+</html>

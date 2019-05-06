@@ -1,0 +1,5 @@
+D:\DotNetWorkspace\MkdFtpClient\bin\Release\MkdFtpClient.dll
+D:\DotNetWorkspace\MkdFtpClient\bin\Release\MkdFtpClient.pdb
+D:\DotNetWorkspace\MkdFtpClient\obj\Release\ResolveAssemblyReference.cache
+D:\DotNetWorkspace\MkdFtpClient\obj\Release\MkdFtpClient.dll
+D:\DotNetWorkspace\MkdFtpClient\obj\Release\MkdFtpClient.pdb

@@ -1,0 +1,11 @@
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Release\MkdFTPGuiClient.exe
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Release\MkdFTPGuiClient.pdb
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Release\MkdFtpClient.dll
+D:\DotNetWorkspace\MkdFTPGuiClient\bin\Release\MkdFtpClient.pdb
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Release\ResolveAssemblyReference.cache
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Release\MkdFTPGuiClient.MainForm.resources
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Release\MkdFTPGuiClient.Properties.Resources.resources
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Release\GenerateResource.read.1.tlog
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Release\GenerateResource.write.1.tlog
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Release\MkdFTPGuiClient.exe
+D:\DotNetWorkspace\MkdFTPGuiClient\obj\x86\Release\MkdFTPGuiClient.pdb
